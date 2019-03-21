@@ -15,7 +15,9 @@ class ReadFile {
             let valores = [];
             let pruebas = [];
             campos.forEach(vector => {
-                if(vector[2] != 'NULL')
+                if(vector[2] === 'NULL')
+                    valores.push(null);
+                else 
                     valores.push(this.convertirCadena(vector[2]));
             });
             
@@ -24,7 +26,6 @@ class ReadFile {
                     let res = this.comprobarResultado(valor, campos[i][3]);
                     pruebas.push(res);
             }
-            console.log(pruebas);
         });
     }
     
@@ -32,9 +33,12 @@ class ReadFile {
         if(typeof this.medias[nombreMetodo] === 'function')
         {
             if(valores != null) {
+                console.log(valores);
                 let mediaAritmetica = this.medias[nombreMetodo](valores);
                 return mediaAritmetica;
-            } 
+            } else {
+                console.log("No se aceptan tipo null");
+            }
         }
     }
 
