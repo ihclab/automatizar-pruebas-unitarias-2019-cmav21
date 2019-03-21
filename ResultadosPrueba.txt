@@ -1,7 +1,7 @@
 ID   Resultado Método           Detalles
 ==========================================================  
 
-0001   Éxito   mediaAritmetica Calculado = 4.6666 T.E: 0.002 ms
+0001   Éxito   mediaAritmetica Calculado = 4.6667 T.E: 0.002 ms
 0002   Éxito   mediaAritmetica Calculado = 3.0000 T.E: 0.001 ms
 0003   Éxito   mediaAritmetica Calculado = 10.5000 T.E: 0.0002 ms
 0004  *Falla*  mediaGeometrica Calculado = 5.6569 Esperado = 6.6569 T.E: 0.000 ms
