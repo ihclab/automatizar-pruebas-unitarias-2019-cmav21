@@ -3,52 +3,22 @@ const claseMedia = require('./Medias');
 
 class ReadFile {
     constructor(){
-        this.medias = new claseMedia();
+        this.medias = claseMedia;
+        this.mediaGeometrica = new claseMedia();
     }
 
-    leerArchivo () {        
+    leerArchivo () {
         fs.readFile('./CasosPrueba.txt', 'utf-8', (err, data)=> {
             if(err)
-                console.log(err); 
+                console.log(err);
             let lineas = data.split('\r\n');
-            let campos = this.separarCampos(lineas);
             let valores = [];
             let pruebas = [];
-            campos.forEach(vector => {
-                if(vector[2] === 'NULL')
-                    valores.push(null);
-                else 
-                    valores.push(this.convertirCadena(vector[2]));
-            });
-            
-            for (let i = 0; i < campos.length; i++) {
-                    let valor = this.ejecutarMetodo(campos[i][1], valores[i])
-                    let res = this.comprobarResultado(valor, campos[i][3]);
-                    pruebas.push(res);
-            }
+            let campos = this.separarCampos(lineas);
+            valores = this.separarPorNulls(valores, campos);
+            pruebas = this.obtenerResultados(campos, valores, pruebas); 
+            console.log(pruebas);
         });
-    }
-    
-    ejecutarMetodo(nombreMetodo, valores){
-        if(typeof this.medias[nombreMetodo] === 'function')
-        {
-            if(valores != null) {
-                console.log(valores);
-                let mediaAritmetica = this.medias[nombreMetodo](valores);
-                return mediaAritmetica;
-            } else {
-                console.log("No se aceptan tipo null");
-            }
-        }
-    }
-
-    comprobarResultado(valor, resultado){
-        if(!isNaN(resultado)){
-            resultado = parseFloat(resultado);
-            return valor === resultado;
-        } else {
-            return false;
-        }
     }
 
     separarCampos (elementos) {
@@ -60,6 +30,51 @@ class ReadFile {
         return campos;
     }
     
+    separarPorNulls(contenedor, data){
+        data.forEach(vector => {
+            if(vector[2] === 'NULL')
+                contenedor.push(null);
+            else
+                contenedor.push(this.convertirCadena(vector[2]));
+        });
+        return contenedor;
+    }
+
+    obtenerResultados(campos, valores, pruebas){
+        for (let i = 0; i < campos.length; i++) {
+            let valor = this.ejecutarMetodo(campos[i][1], valores[i])
+            try{ 
+                let res = this.comprobarResultado(valor, campos[i][3]);
+                pruebas.push(res);
+            } catch(err){
+                console.log(err);
+            }
+        }
+        return pruebas;
+    }
+    
+    ejecutarMetodo(nombreMetodo, valores){
+        let media = nombreMetodo == 'mediaGeometrica' ? this.mediaGeometrica : this.medias;
+        if(typeof media[nombreMetodo] === 'function')
+        {
+            try{
+                let mediaAritmetica = media[nombreMetodo](valores);
+                return mediaAritmetica;
+            } catch(err){
+                console.log(err);
+            }
+        }
+    }
+    
+    comprobarResultado(valor, resultado){
+        try{
+            resultado = parseFloat(resultado);
+            return valor == resultado;
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
     convertirCadena(cadena){
         let elementos = cadena.split(' ');
         let valores = [];
