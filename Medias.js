@@ -9,7 +9,7 @@ class Medias {
             });
             return (result/vals.length).toFixed(4);
         } catch(err){
-            throw new Error(err);
+            throw new Error(` no ${err}`);
         }
     }
 
@@ -17,7 +17,7 @@ class Medias {
         try{
             return Math.pow(x, (1/n));
         } catch(err){
-            return new Error("no" +err);
+            throw new Error("no" +err);
         }
     };
 
@@ -29,7 +29,7 @@ class Medias {
             });   
             return Medias.raizEnesima(result, vals.length).toFixed(4);
         } catch(err){
-            return new Error(err);
+            throw new Error(err);
         }
     };
 
