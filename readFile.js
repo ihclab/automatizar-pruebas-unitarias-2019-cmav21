@@ -1,10 +1,12 @@
 const fs = require('fs');
 const claseMedia = require('./Medias');
+const microprofiler = require('microprofiler');
 
 class ReadFile {
     constructor(){
         this.medias = claseMedia;
         this.mediaGeometrica = new claseMedia();
+        this.ejecucionPerMetodo = [];
     }
 
     leerArchivo () {
@@ -14,10 +16,13 @@ class ReadFile {
             let lineas = data.split('\r\n');
             let valores = [];
             let pruebas = [];
+            let resultados = [];
+            let textoArchivo = '';
             let campos = this.separarCampos(lineas);
             valores = this.separarPorNulls(valores, campos);
-            pruebas = this.obtenerResultados(campos, valores, pruebas); 
-            console.log(pruebas);
+            pruebas = this.obtenerResultados(campos, valores, pruebas, resultados);
+            textoArchivo = this.obtenerTextoArchivo(pruebas, campos, valores); 
+            console.log(resultados);
         });
     }
 
@@ -40,36 +45,60 @@ class ReadFile {
         return contenedor;
     }
 
-    obtenerResultados(campos, valores, pruebas){
+    obtenerResultados(campos, valores, pruebas, resultadosMetodo){
         for (let i = 0; i < campos.length; i++) {
             let valor = this.ejecutarMetodo(campos[i][1], valores[i])
+            resultadosMetodo.push(valor);
             try{ 
                 let res = this.comprobarResultado(valor, campos[i][3]);
                 pruebas.push(res);
             } catch(err){
+                pruebas.push('exception');
                 console.log(err);
             }
         }
         return pruebas;
     }
+
+    obtenerTextoArchivo(valores, campos, resultados){
+        let texto = '';
+        for (let i = 0; i < valores.length; i++) {
+            texto += `${campos[i][0]} ${valores[i]} ${campos[i][1]} = ${resultados[i]} \n`;   
+        }   
+        return texto;
+    }
     
+    guardarEnArchivo(texto){
+        return 0;
+    }
+
     ejecutarMetodo(nombreMetodo, valores){
         let media = nombreMetodo == 'mediaGeometrica' ? this.mediaGeometrica : this.medias;
         if(typeof media[nombreMetodo] === 'function')
         {
             try{
+                var start = microprofiler.start();
                 let mediaAritmetica = media[nombreMetodo](valores);
+                var end = microprofiler.measureFrom(start);
+                this.ejecucionPerMetodo.push((end/1000).toFixed(4));
                 return mediaAritmetica;
             } catch(err){
                 console.log(err);
             }
+        } else {
+            return 'Metodo no encontrado';
         }
     }
     
     comprobarResultado(valor, resultado){
         try{
-            resultado = parseFloat(resultado);
-            return valor == resultado;
+            if(valor === 'dude aqui no hay nada' || valor === 'Metodo no encontrado'){
+                return '    ';
+            } 
+            else{
+                resultado = parseFloat(resultado);
+                return valor == resultado ? 'Exito' : 'Falla';
+            }
         } catch(err) {
             console.log(err);
         }

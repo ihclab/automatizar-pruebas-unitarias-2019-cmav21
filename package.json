@@ -1,0 +1,22 @@
+{
+  "name": "automatizar-pruebas-unitarias-2019-cmav21",
+  "version": "1.0.0",
+  "description": "automatizar pruebasa",
+  "main": "readFile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ihclab/automatizar-pruebas-unitarias-2019-cmav21.git"
+  },
+  "author": "cmav21",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ihclab/automatizar-pruebas-unitarias-2019-cmav21/issues"
+  },
+  "homepage": "https://github.com/ihclab/automatizar-pruebas-unitarias-2019-cmav21#readme",
+  "dependencies": {
+    "microprofiler": "^1.0.2"
+  }
+}

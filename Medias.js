@@ -3,6 +3,8 @@ class Medias {
 
     static mediaAritmetica (vals){
         try{
+            if(vals === null)
+                return 0.0000;
             let result = 0;
             vals.forEach(element => {
                 result += element;
@@ -23,6 +25,12 @@ class Medias {
 
     mediaGeometrica (vals){
         try{
+            if(vals === null)
+                return 0.0000;
+            let zero = vals.filter(number => number === 0);
+            if(zero.length > 1){
+                throw new Error();
+            }
             let result = 1;
             vals.forEach(element => {
                 result *= element
