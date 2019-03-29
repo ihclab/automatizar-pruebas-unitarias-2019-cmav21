@@ -1,7 +1,6 @@
 const fs = require('fs');
 const claseMedia = require('./Medias');
 const microprofiler = require('microprofiler');
-
 class ReadFile {
     constructor(){
         this.medias = claseMedia;
@@ -21,8 +20,8 @@ class ReadFile {
             let campos = this.separarCampos(lineas);
             valores = this.separarPorNulls(valores, campos);
             pruebas = this.obtenerResultados(campos, valores, pruebas, resultados);
-            console.log(this.ejecucionPerMetodo);
-            // textoArchivo = this.obtenerTextoArchivo(campos,pruebas, valores, resultados); 
+            textoArchivo = this.obtenerTextoArchivo(campos,pruebas, valores, resultados); 
+            this.guardarEnArchivo(textoArchivo);
         });
     }
 
@@ -51,6 +50,10 @@ class ReadFile {
             resultadosMetodo.push(valor);
             try{ 
                 let res = this.comprobarResultado(valor, campos[i][3]);
+                if(res != `Falla`)
+                    console.log('\x1b[32m',res);
+                else
+                    console.log('\x1b[31m',res)
                 pruebas.push(res);
             } catch(err){
                 pruebas.push('exception');
@@ -60,31 +63,32 @@ class ReadFile {
         return pruebas;
     }
 
-    // obtenerTextoArchivo( campos, resultadosPruebas, resPruebas, resultados){
-    //     let texto = 'ID     ResultadoMétodo         Detalles \n========================================= \n';
-    //     let exito = resultadosPruebas.filter(element => element === 'Exito');
-    //     let falla = resultadosPruebas.filter(element => element === 'Falla')
-    //     for (let i = 0; i < resPruebas.length; i++) {
-    //             texto += ``;
-    //             if(resultadosPruebas[i].split('    ')[1] !== 'Metodo no implementado' && resultadosPruebas[i].split('    ')[1] !== 'Metodo no encontrado'){
-    //                 if(resultadosPruebas[i] === 'Exito')
-    //                 texto += `${campos[i][0]}    ${resultadosPruebas[i]}   ${campos[i][1]} Calculado = ${resultados[i]} T.E: ${this.ejecucionPerMetodo[i]} ms \n`;
-    //                 else
-    //                 texto += `${campos[i][0]}   *${resultadosPruebas[i]}*  ${campos[i][1]} Calculado = ${resultados[i]} Esperado = ${campos[i][3]} T.E: ${this.ejecucionPerMetodo[i]} ms \n`;
-    //             } else {
-    //                 texto += `${campos[i][0]}          ${resultadosPruebas[i]}   ${campos[i][1]} \n` ;
-    //             }
-    //     }   
-    //     return texto += `================== Fin de la prueba====================== \nExito = ${exito.length}    Falla = ${falla.length}`;
-    // }
+    obtenerTextoArchivo( campos, resultadosPruebas, resPruebas, resultados){
+        let texto = 'ID     ResultadoMétodo         Detalles \n========================================= \n';
+        let exito = resultadosPruebas.filter(element => element === 'Exito');
+        let falla = resultadosPruebas.filter(element => element === 'Falla')
+        for (let i = 0; i < resPruebas.length; i++) {
+            if(resultadosPruebas[i].split('    ')[1] !== 'Metodo no implementado' && resultadosPruebas[i].split('    ')[1] !== 'Metodo no encontrado'){
+                if(campos[i][3] == 'Exception')
+                    resultados[i] = '0.0000';
+                if(resultadosPruebas[i] === 'Exito')
+                    texto += `${campos[i][0]}    ${resultadosPruebas[i]}   ${campos[i][1]} Calculado = ${resultados[i]} T.E: ${this.ejecucionPerMetodo[i]} ms \n`;
+                else
+                    texto += `${campos[i][0]}   *${resultadosPruebas[i]}*  ${campos[i][1]} Calculado = ${resultados[i]} Esperado = ${campos[i][3]} T.E: ${this.ejecucionPerMetodo[i]} ms \n`;
+                } else {
+                    texto += `${campos[i][0]}          ${resultadosPruebas[i]}   ${campos[i][1]} \n` ;
+            }
+        }   
+        return texto += `================== Fin de la prueba====================== \nExito = ${exito.length}    Falla = ${falla.length}`;
+    }
     
-    // guardarEnArchivo(texto){
-    //     fs.writeFile('resultadosPrueba.txt', texto, 'utf8', (err) => {
-    //         if(err)
-    //             console.log(err);
-    //         console.log('el archivo fue almacenado con exito');
-    //     })
-    // }
+    guardarEnArchivo(texto){
+        fs.writeFile('actividadComplementaria03.txt', texto, 'utf8', (err) => {
+            if(err)
+                console.log(err);
+            console.log('el archivo fue almacenado con exito');
+        })
+    }
 
     ejecutarMetodo(nombreMetodo, valores){
         let media = nombreMetodo == 'mediaGeometrica' ? this.mediaGeometrica : this.medias;
@@ -106,15 +110,14 @@ class ReadFile {
     
     comprobarResultado(valor, resultado){
         try{
-            // if(valor === 'dude aqui no hay nada'){
-            //     return 'Metodo no implementado';
-            // } else if(valor === 'Metodo no encontrado'){
-            //     return 'Metodo no encontrado';                
-            // }
-            // else{
+            if(valor === 'dude aqui no hay nada'){
+                return 'Metodo no implementado';
+            } else if(valor === 'Metodo no encontrado'){
+                return 'Metodo no encontrado';                
+            } else{
                 resultado = parseFloat(resultado);
-                return valor == resultado ? `'\x1b[32m'Exito` : `'\x1b[31m'Falla`;
-            // }
+                return valor == resultado ? `Exito` : `Falla`;
+            }
         } catch(err) {
             console.log(err);
         }
