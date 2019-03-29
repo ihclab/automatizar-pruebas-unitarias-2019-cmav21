@@ -21,6 +21,7 @@ class ReadFile {
             let campos = this.separarCampos(lineas);
             valores = this.separarPorNulls(valores, campos);
             pruebas = this.obtenerResultados(campos, valores, pruebas, resultados);
+            console.log(this.ejecucionPerMetodo);
             // textoArchivo = this.obtenerTextoArchivo(campos,pruebas, valores, resultados); 
         });
     }
@@ -50,7 +51,6 @@ class ReadFile {
             resultadosMetodo.push(valor);
             try{ 
                 let res = this.comprobarResultado(valor, campos[i][3]);
-                console.log(res);
                 pruebas.push(res);
             } catch(err){
                 pruebas.push('exception');
